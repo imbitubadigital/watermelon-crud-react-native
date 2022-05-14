@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "offlinewatermelon",
+    "slug": "offlinewatermelon",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
