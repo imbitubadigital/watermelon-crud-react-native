@@ -1,21 +1,23 @@
+import 'react-native-gesture-handler';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
+import { Home } from './src/screens/Home';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Offline First</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+    <StatusBar
+      style="light"
+      translucent
+      backgroundColor="transparent"
+    />
+    <Home />
+  </>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+
+export default gestureHandlerRootHOC(App);
