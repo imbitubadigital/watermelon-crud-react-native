@@ -1,6 +1,7 @@
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 
-export const Container = styled.TouchableOpacity`
+export const Container = styled(TouchableOpacity)`
     width: 100%;
     height: 56px;
     background-color: #F25F5C;

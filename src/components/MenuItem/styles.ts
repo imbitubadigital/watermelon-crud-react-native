@@ -17,6 +17,4 @@ export const Title = styled.Text`
     font-weight: bold;
     margin: 7px 24px 0;
 `;
-export const Icon = styled(Entypo)`
 
-`;
