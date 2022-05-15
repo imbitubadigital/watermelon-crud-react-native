@@ -17,7 +17,6 @@ type Props = {
 
 export function Skill({ data, onRemove, onEdit }: Props) {
 
-  console.log('bbb',data)
   return (
     <Container>
       <Icon type={data.type}>

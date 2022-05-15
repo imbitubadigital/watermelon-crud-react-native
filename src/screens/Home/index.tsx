@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, FlatList } from 'react-native';
+import { FlatList, Keyboard } from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
+import {Q} from '@nozbe/watermelondb';
 
 import { Menu, MenuTypeProps } from '../../components/Menu';
 import { Skill } from '../../components/Skill';
@@ -14,36 +15,62 @@ export function Home() {
   const [type, setType] = useState<MenuTypeProps>("soft");
   const [name, setName] = useState('');
   const [skillsData, setSkillsData] = useState<SkillModel[]>([]);
+  const [skill, setSkill] = useState<SkillModel>({} as SkillModel);
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
-
-
-
-//  console.log('aaa', skillsData);
 
   const getSkills = async() => {
     const skillCollection = DB.get<SkillModel>('skills');
 
-    const response = await skillCollection.query().fetch();
+    const response = await skillCollection.query(Q.where('type', type)).fetch();
 
     setSkillsData(response);
   }
 
   useEffect(() => {
     getSkills()
-  }, [])
+  }, [type])
 
   const handleSave = async() => {
-    await DB.write(async () => {
-      await DB.get<SkillModel>('skills').create(data => {
-        data.name = name,
-        data.type = type
+    if(skill.id){
+      await DB.write(async()=>{
+        await skill.update(data => {
+          data.name = name
+          data.type = type
+        })
       })
-    })
 
-    Alert.alert('Criado com sucesso.')
+      setSkill({} as SkillModel);
+
+    }else {
+
+      await DB.write(async () => {
+        await DB.get<SkillModel>('skills').create(data => {
+          data.name = name,
+          data.type = type
+        })
+      })
+    }
+
+
 
     bottomSheetRef.current?.collapse()
+    setName('')
+    Keyboard.dismiss()
+    getSkills()
+  }
+
+  const handleRemove = async (item: SkillModel) => {
+    await DB.write(async() => {
+      await item.destroyPermanently();
+    })
+    getSkills()
+  }
+
+  const handleEdit = async(item: SkillModel) => {
+    setSkill(item);
+    setName(item.name);
+    bottomSheetRef.current?.expand();
   }
 
   return (
@@ -60,8 +87,8 @@ export function Home() {
         renderItem={({ item }) => (
           <Skill
             data={item}
-            onEdit={() => { }}
-            onRemove={() => { }}
+            onEdit={() => handleEdit(item)}
+            onRemove={() => handleRemove(item)}
           />
         )}
       />
@@ -74,7 +101,7 @@ export function Home() {
         snapPoints={['2.5%', '35%']}
       >
         <Form>
-          <FormTitle>New</FormTitle>
+          <FormTitle>{!skill.id ? 'Novo': 'Editando'}</FormTitle>
 
           <Input
             placeholder="New skill..."
